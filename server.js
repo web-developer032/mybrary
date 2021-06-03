@@ -7,6 +7,7 @@ const expressLayouts = require("express-ejs-layouts");
 const mongoose = require("mongoose");
 const indexRouter = require("./routes/indexRoute");
 const authorRouter = require("./routes/authorRoute");
+const bookRouter = require("./routes/bookRoute");
 
 const app = express();
 mongoose.connect(process.env.DATABASE_URL, {
@@ -38,6 +39,12 @@ app.use(expressLayouts);
 // Routes
 app.use("/", indexRouter);
 app.use("/authors", authorRouter);
+app.use("/books", bookRouter);
+
+app.use(function (err, req, res, next) {
+  console.log("This is the invalid field ->", err.field);
+  next(err);
+});
 
 app.listen(process.env.PORT || 4000, function (err) {
   if (err) console.log("Error in server setup");
