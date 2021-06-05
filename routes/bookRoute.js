@@ -2,21 +2,8 @@ const express = require("express");
 const router = express.Router();
 const Book = require("../models/bookModel");
 const Author = require("../models/authorModel");
-const fs = require("fs");
 
-// for handling file
-const multer = require("multer"); // package that handle files
-const path = require("path"); // to make path
-const uploadPath = path.join("public", Book.coverImageBasePath); // making path
 const imageMimeTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif"]; // declaring which files we accept
-
-const upload = multer({
-  dest: uploadPath,
-  fileFilter: (req, file, callback) => {
-    console.log(file.mimetype);
-    callback(null, imageMimeTypes.includes(file.mimetype));
-  },
-});
 
 // All Books
 router.get("/", async (req, res) => {
@@ -44,40 +31,25 @@ router.get("/new", async (req, res) => {
 });
 
 // All Authors
-router.post(
-  "/",
-  upload.single("coverImage"), // this should be same as the input field name
-  async (req, res) => {
-    const filename = req.file?.filename || null;
-    console.log("File: ", req.file);
-    console.log("FileName: ", filename);
-    const book = new Book({
-      title: req.body.title,
-      author: req.body.author,
-      publishDate: new Date(req.body.publishDate),
-      pageCount: req.body.pageCount,
-      description: req.body.description,
-      // coverImageName: filename,
-      coverImageName: filename,
-    });
-
-    try {
-      const newBook = await book.save();
-      // res.redirect(`/books/${newBook.id}`);
-      res.redirect("/books");
-    } catch (error) {
-      // console.log(error);
-      if (book.coverImageName) removeBookCover(book.coverImageName);
-      renderNewPage(res, book, true);
-    }
-  }
-);
-
-function removeBookCover(filename) {
-  fs.unlink(path.join(uploadPath, filename), (err) => {
-    if (err) console.log(err);
+router.post("/", async (req, res) => {
+  const book = new Book({
+    title: req.body.title,
+    author: req.body.author,
+    publishDate: new Date(req.body.publishDate),
+    pageCount: req.body.pageCount,
+    description: req.body.description,
   });
-}
+
+  saveCover(book, req.body.coverImage);
+  try {
+    const newBook = await book.save();
+    // res.redirect(`/books/${newBook.id}`);
+    res.redirect("/books");
+  } catch (error) {
+    // console.log(error);
+    renderNewPage(res, book, true);
+  }
+});
 
 async function renderNewPage(res, book, hasError = false) {
   try {
@@ -91,6 +63,16 @@ async function renderNewPage(res, book, hasError = false) {
   } catch (err) {
     console.log(error);
     res.redirect("/books");
+  }
+}
+
+function saveCover(book, encodedCover) {
+  if (encodedCover) {
+    const cover = JSON.parse(encodedCover);
+    if (cover && imageMimeTypes.includes(cover.type)) {
+      book.coverImage = new Buffer.from(cover.data, "base64");
+      book.coverImageType = cover.type;
+    }
   }
 }
 

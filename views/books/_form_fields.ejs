@@ -19,7 +19,7 @@
 <div>
   <label for="publishDate">Publish Date: </label>
   <input type="date" name="publishDate" id="publishDate" value="<%=
-  book?.publishDate?.toISOString().split('T')[0] %>" />
+  book?.publishDate?.toISOString().split('T')[0]%>" />
 </div>
 <div>
   <label for="pageCount">Page Count: </label>
@@ -34,7 +34,7 @@
 </div>
 <div>
     <label for="coverImage">Cover Image</label>
-    <input type="file" name="coverImage" id="coverImage">
+    <input type="file" name="coverImage" class="filepond" id="coverImage">
 </div>
 <div>
     <label for="description">Description: </label>
