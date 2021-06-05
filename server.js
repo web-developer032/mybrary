@@ -5,6 +5,7 @@ if (process.env.NODE_ENV !== "production") {
 const express = require("express");
 const expressLayouts = require("express-ejs-layouts");
 const mongoose = require("mongoose");
+const methodOverride = require("method-override");
 const indexRouter = require("./routes/indexRoute");
 const authorRouter = require("./routes/authorRoute");
 const bookRouter = require("./routes/bookRoute");
@@ -35,6 +36,8 @@ app.set("view engine", "ejs");
 app.set("views", __dirname + "/views");
 app.set("layout", "layouts/layout");
 app.use(expressLayouts);
+
+app.use(methodOverride("_method")); // to override put and post requests
 
 // Routes
 app.use("/", indexRouter);
