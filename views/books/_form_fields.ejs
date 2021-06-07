@@ -1,27 +1,32 @@
-<div>
-  <label for="title">Title: </label>
-  <input type="text" name="title" id="title" value="<%= book.title %>" />
+<div class="form-row">  
+  <div class="form-item">
+    <label for="title">Title: </label>
+    <input type="text" name="title" id="title" value="<%= book.title %>" />
+  </div>
+  
+  <div class="form-item">
+    <label for="author">Author: </label>
+    <select name="author" id="author">
+      <% authors.forEach(author => { %> <% if (book.author === author.id) { %>
+      <option
+        value="<%= author.id %>"
+        label="<%= author.name %>"
+        selected
+      />
+      <% } else { %>
+      <option value="<%= author.id %>" label="<%= author.name %>"></option>
+      <% }%> <% }) %>
+    </select>
+  </div>
 </div>
-<div>
-  <label for="author">Author: </label>
-  <select name="author" id="author">
-    <% authors.forEach(author => { %> <% if (book.author === author.id) { %>
-    <option
-      value="<%= author.id %>"
-      label="<%= author.name %>"
-      selected
-    />
-    <% } else { %>
-    <option value="<%= author.id %>" label="<%= author.name %>"></option>
-    <% }%> <% }) %>
-  </select>
-</div>
-<div>
+<div class="form-row">
+
+<div class="form-item">
   <label for="publishDate">Publish Date: </label>
   <input type="date" name="publishDate" id="publishDate" value="<%=
   book?.publishDate?.toISOString().split('T')[0]%>" />
 </div>
-<div>
+<div class="form-item">
   <label for="pageCount">Page Count: </label>
   <input
     type="number"
@@ -32,11 +37,15 @@
     book.pageCount %>"
   />
 </div>
-<div>
-    <label for="coverImage">Cover Image</label>
-    <input type="file" name="coverImage" class="filepond" id="coverImage">
 </div>
-<div>
+
+<div class="form-row">
+  <div class="form-item form-item-no-grow">
+    <label for="coverImage">Cover Image</label>
+    <input type="file" name="coverImage" class="filepond book-cover" id="coverImage">
+  </div>
+  <div class="form-item">
     <label for="description">Description: </label>
     <textarea name="description" id="description" ><%= book.description %></textarea>
- </div>
+  </div>
+</div>
